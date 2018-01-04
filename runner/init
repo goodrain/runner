@@ -1,0 +1,75 @@
+#!/bin/bash
+set -eo pipefail
+
+[ $DEBUG ] && set -x
+
+# catch init parameter
+if [ "$1" == "version" ];then
+	echo $RELEASE_DESC
+	exit 0
+elif [ "$1" == "debug" ];then
+	/bin/bash
+else
+	# $1 : start
+	# $2 : runner type [web]
+	action=${1:-start}
+	app_type=${2:-web}
+fi
+
+if [[ -f /etc/environment_proxy ]]; then
+	source /etc/environment_proxy
+fi
+
+## Load slug from Bind Mount, URL or STDIN
+
+export HOME=/app
+mkdir -p $HOME
+
+sleep ${PAUSE:-0}
+
+if [ -f /tmp/slug/slug.tgz ]; then
+	tar  -xzf /tmp/slug/slug.tgz -C $HOME || exit 1
+else
+	echo "slug file error !" && exit 1
+fi
+cd $HOME
+
+
+## Load profile.d and release config
+
+shopt -s nullglob
+mkdir -p .profile.d
+
+
+if [[ -s .release ]]; then
+	ruby -e "require 'yaml';(YAML.load_file('.release')['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" > .profile.d/config_vars
+fi
+
+# 复制grproxy 启动文件
+#cp /tmp/profile.d/grproxy.sh .profile.d/grproxy.sh
+
+
+# 运行 .profile.d 中的所有文件
+for file in .profile.d/*; do
+	source $file
+done
+hash -r
+
+## Inject "start" command to run processes defined in Procfile
+
+case "$action" in
+	start)
+		if [[ -f Procfile ]]; then
+			command="$(ruby -e "require 'yaml';puts YAML.load_file('Procfile')['$app_type']")"
+		else
+			command="$(ruby -e "require 'yaml';puts (YAML.load_file('.release')['default_process_types'] || {})['$app_type']")"
+		fi
+		;;
+
+	*)
+		command="$@"
+		;;
+esac
+
+## Run!
+exec bash -c "$command"
