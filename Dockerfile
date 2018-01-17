@@ -13,6 +13,8 @@ RUN addgroup --quiet --gid 200 rain && \
 RUN chown rain:rain /app
 WORKDIR /app
 
+# download webapp-runner for java-war
+RUN wget http://pkg.goodrain.com/java/webapp-runner/webapp-runner-8.5.5.2.jar -O /opt/webapp-runner.jar
 
 # add default port to expose (can be overridden)
 ENV PORT 5000
