@@ -13,17 +13,6 @@ RUN addgroup --quiet --gid 200 rain && \
 RUN chown rain:rain /app
 WORKDIR /app
 
-# 创建goodrain程序目录
-#RUN mkdir -pv /opt/bin
-
-# 下载grproxy,每次升级需要重新创建runner镜像
-#RUN wget http://lang.goodrain.me/public/gr-listener -O /opt/bin/gr-listener
-
-# 添加可执行权限
-#RUN chmod +x /opt/bin/*
-
-#ADD ./profile.d /tmp/profile.d
-
 
 # add default port to expose (can be overridden)
 ENV PORT 5000
