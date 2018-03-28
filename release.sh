@@ -46,8 +46,8 @@ function release(){
 
   sed "s/__RELEASE_DESC__/${release_desc}/" Dockerfile > Dockerfile.release
 
-  docker build -t hub.goodrain.com/dc-deploy/${image_name}:${release_version} -f Dockerfile.release .
-  docker push hub.goodrain.com/dc-deploy/${image_name}:${release_version}
+  docker build -t rainbond/${image_name}:${release_version} -f Dockerfile.release .
+  docker push rainbond/${image_name}:${release_version}
 }
 
 case $release_type in
@@ -58,6 +58,6 @@ case $release_type in
     release $1 ${release_version}
     ;;
 "master")
-    release $1
+    release $1 ${release_version}
     ;;
 esac
