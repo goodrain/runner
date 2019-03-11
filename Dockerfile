@@ -1,4 +1,4 @@
-FROM hub.goodrain.com/dc-deploy/cedar14
+FROM rainbond/cedar14
 MAINTAINER ethan <ethan@goodrain.me>
 
 # 时区设置
@@ -29,5 +29,5 @@ RUN mkdir /data && chown rain:rain /data
 
 ADD ./runner /runner
 RUN chown rain:rain /runner/init
-USER rain
+#USER rain
 ENTRYPOINT ["/runner/init"]

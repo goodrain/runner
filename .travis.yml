@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+  - docker
+
+git:
+  depth: 1
+
+before_install:
+- docker pull rainbond/cedar14
+
+script:
+- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+- ./release.sh
