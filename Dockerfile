@@ -1,8 +1,12 @@
 FROM rainbond/cedar14
 MAINTAINER ethan <ethan@goodrain.me>
 
-# 时区设置
 RUN echo "Asia/Shanghai" > /etc/timezone;dpkg-reconfigure -f noninteractive tzdata
+
+RUN set -x \
+    && apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates procps curl net-tools rsync \
+    && rm -rf /var/lib/apt/lists/* 
 
 ENV HOME /app
 
@@ -22,7 +26,6 @@ ENV RELEASE_DESC=__RELEASE_DESC__
 
 EXPOSE 5000
 
-# 配置crontab 权限
 RUN chmod 1777 /run && usermod  -G crontab rain && chmod u+s /usr/bin/crontab && chmod u+s /usr/sbin/cron
 
 RUN mkdir /data && chown rain:rain /data

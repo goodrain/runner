@@ -27,13 +27,21 @@ mkdir -p $HOME
 
 sleep ${PAUSE:-0}
 
+check_app_dir=$(ls -al | wc -l)
+
 if [ -f /tmp/slug/slug.tgz ]; then
-	tar  -xzf /tmp/slug/slug.tgz -C $HOME || exit 1
+	if [ "$check_app_dir" -ne 3 ]; then
+		mkdir -p /tmp/app
+		tar xf /tmp/slug/slug.tgz -C /tmp/app || exit 1
+		rsync -a --ignore-existing /tmp/app/ /app
+	else
+		tar xf /tmp/slug/slug.tgz -C $HOME || exit 1
+	fi
 else
 	echo "slug file error !" && exit 1
 fi
-cd $HOME
 
+cd $HOME
 
 ## Load profile.d and release config
 
