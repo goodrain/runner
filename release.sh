@@ -18,8 +18,10 @@ build::local(){
 
 build::public(){
     docker tag goodrain.me/runner rainbond/runner:${release_version}
+    docker tag goodrain.me/runner rainbond/runner
     if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then 
         docker push rainbond/runner:${release_version}
+        docker push rainbond/runner
     fi
 }
 
