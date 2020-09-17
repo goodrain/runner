@@ -5,16 +5,16 @@ RUN echo "Asia/Shanghai" > /etc/timezone;dpkg-reconfigure -f noninteractive tzda
 
 RUN set -x \
     && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates procps curl net-tools rsync \
+    && apt-get install --no-install-recommends --no-install-suggests -y ttf-dejavu apt-transport-https ca-certificates procps curl net-tools rsync \
     && rm -rf /var/lib/apt/lists/* 
 
 ENV HOME /app
 
-RUN mkdir /app
-RUN addgroup --quiet --gid 200 rain && \
-    useradd rain --uid=200 --gid=200 --home-dir /app --no-create-home \
-        --shell /bin/bash
-RUN chown rain:rain /app
+RUN mkdir /app \
+    && addgroup --quiet --gid 200 rain \
+    && useradd rain --uid=200 --gid=200 --home-dir /app --no-create-home \
+        --shell /bin/bash \
+    && chown rain:rain /app
 WORKDIR /app
 
 # download webapp-runner for java-war
@@ -26,11 +26,18 @@ ENV RELEASE_DESC=__RELEASE_DESC__
 
 EXPOSE 5000
 
-RUN chmod 1777 /run && usermod  -G crontab rain && chmod u+s /usr/bin/crontab && chmod u+s /usr/sbin/cron
-
-RUN mkdir /data && chown rain:rain /data
+RUN chmod 1777 /run && usermod  -G crontab rain && chmod u+s /usr/bin/crontab && chmod u+s /usr/sbin/cron \
+    && mkdir /data && chown rain:rain /data
 
 ADD ./runner /runner
 RUN chown rain:rain /runner/init
+
+## install libpng16 for ubuntu14.04 
+
+RUN wget https://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.37/libpng-1.6.37.tar.xz \
+    && tar -xf libpng-1.6.37.tar.xz \
+    && cd libpng-1.6.37 && ./configure && make check && make install && ldconfig \
+    && cd ../ && rm -rf libpng-1.6.37.tar.xz && rm -rf libpng-1.6.37
+
 #USER rain
 ENTRYPOINT ["/runner/init"]
