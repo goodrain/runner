@@ -5,6 +5,7 @@ RUN echo "Asia/Shanghai" > /etc/timezone;dpkg-reconfigure -f noninteractive tzda
 
 RUN set -x \
     && apt-get update \
+    && apt-get -y install language-pack-zh-hans \
     && apt-get install --no-install-recommends --no-install-suggests -y ttf-dejavu apt-transport-https ca-certificates procps curl net-tools rsync \
     && rm -rf /var/lib/apt/lists/* 
 
@@ -39,5 +40,6 @@ RUN wget https://jaist.dl.sourceforge.net/project/libpng/libpng16/1.6.37/libpng-
     && cd libpng-1.6.37 && ./configure && make check && make install && ldconfig \
     && cd ../ && rm -rf libpng-1.6.37.tar.xz && rm -rf libpng-1.6.37
 
+ENV LANG='zh_CN.utf8'
 #USER rain
 ENTRYPOINT ["/runner/init"]
