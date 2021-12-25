@@ -48,8 +48,8 @@ cd $HOME
 shopt -s nullglob
 mkdir -p .profile.d
 
-
-if [[ -s .release ]]; then
+#True if FILE exists and has a size greater than zero.
+if [[ -s .release ]]; then 
 	ruby -e "require 'yaml';(YAML.load_file('.release')['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" > .profile.d/config_vars
 fi
 
