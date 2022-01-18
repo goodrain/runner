@@ -63,6 +63,15 @@ for file in .profile.d/*; do
 done
 hash -r
 
+# 导入库
+
+source /runner/lib/common.sh
+source /runner/lib/sqlvercontrol.sh
+
+# 处理数据库表结构升级
+
+detectSqlControl
+
 ## Inject "start" command to run processes defined in Procfile
 
 case "$action" in
