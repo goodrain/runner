@@ -6,13 +6,22 @@
 通过标准输入，文件挂载或者URL的形式将 压缩后 的应用程序（代码，运行时）传入到Runner镜像并运行。镜像的入口文件会读取Procfile中的内容并运行。
 
 ## 如何使用 Runner
-云帮安装后该镜像自动在计算节点拉取，不需要人工干预。下面主要介绍手动通过runner镜像运行builder生成的压缩包的场景。
+Rainbond 安装后该镜像自动在计算节点拉取，不需要人工干预。下面主要介绍手动通过runner镜像运行builder生成的压缩包的场景。
 
 
-可以通过标准输入将压缩包载入到runner镜像，并运行：
+- 可以通过标准输入将压缩包载入到runner镜像，并运行：
 
 ```bash
 $ cat myslug.tgz | docker run -i -a stdin -a stdout goodrain.me/runner
+```
+
+- 可以通过挂载 slug 包的方式运行：
+
+```bash
+$ docker run -dti --name=runner \
+-v path/to/myslug.tgz:/tmp/slug/slug.tgz \
+-p 5000:5000 \
+goodrain.me/runner
 ```
 
 压缩包的内容会在runner容器启动后解压到 `/app` 目录，在正式启动应用程序之前，会先导入代码目录下 `.profile.d` 中的文件，这里会有应用程序所需要的环境变量。

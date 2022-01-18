@@ -48,8 +48,8 @@ cd $HOME
 shopt -s nullglob
 mkdir -p .profile.d
 
-
-if [[ -s .release ]]; then
+#True if FILE exists and has a size greater than zero.
+if [[ -s .release ]]; then 
 	ruby -e "require 'yaml';(YAML.load_file('.release')['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" > .profile.d/config_vars
 fi
 
@@ -62,6 +62,15 @@ for file in .profile.d/*; do
 	source $file
 done
 hash -r
+
+# 导入库
+
+source /runner/lib/common.sh
+source /runner/lib/sqlvercontrol.sh
+
+# 处理数据库表结构升级
+
+detectSqlControl
 
 ## Inject "start" command to run processes defined in Procfile
 
