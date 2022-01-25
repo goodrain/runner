@@ -9,7 +9,7 @@ function addPath() {
     # run this function for add path to $PATH
     # make binary which built in /app executable by default
     local path=""
-    for bindir in $(find /app/ -type d -name *bin)
+    for bindir in $(find /app/ -type d -name "*bin")
     do 
     path=$path:$bindir
     done
