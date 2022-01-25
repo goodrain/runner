@@ -11,10 +11,11 @@ function addPath() {
     local path=""
     for bindir in $(find /app/ -type d -name "*bin")
     do 
-    path=$path:$bindir
+    path=$bindir:$path
     done
-    echo "export PATH=$PATH$path" > ~/.bashrc
+    echo "export PATH=$path$PATH" > ~/.bashrc
 }
+
 info() {
     echo -e "${GREEN}       $@${NC}"
 }
