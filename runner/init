@@ -4,10 +4,10 @@ set -eo pipefail
 [ $DEBUG ] && set -x
 
 # catch init parameter
-if [ "$1" == "version" ];then
+if [ "$1" == "version" ]; then
 	echo $RELEASE_DESC
 	exit 0
-elif [ "$1" == "debug" ];then
+elif [ "$1" == "debug" ]; then
 	/bin/bash
 else
 	# $1 : start
@@ -49,13 +49,12 @@ shopt -s nullglob
 mkdir -p .profile.d
 
 #True if FILE exists and has a size greater than zero.
-if [[ -s .release ]]; then 
-	ruby -e "require 'yaml';(YAML.load_file('.release')['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" > .profile.d/config_vars
+if [[ -s .release ]]; then
+	ruby -e "require 'yaml';(YAML.load_file('.release')['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" >.profile.d/config_vars
 fi
 
 # 复制grproxy 启动文件
 #cp /tmp/profile.d/grproxy.sh .profile.d/grproxy.sh
-
 
 # 运行 .profile.d 中的所有文件
 for file in .profile.d/*; do
@@ -70,22 +69,28 @@ source /runner/lib/sqlvercontrol.sh
 
 # 处理数据库表结构升级
 
-detectSqlControl
+if [[ ${ALLOW_SCHEMA_UPDATE:-"true"} != "false" ]]; then
+	detectSqlControl $HOME/${SCHEMA_DIR:-"Schemadir"}
+fi
+
+# 设置 PATH 变量，使 /app 目录下的所有二进制可以在 web shell 下被执行
+
+addPath
 
 ## Inject "start" command to run processes defined in Procfile
 
 case "$action" in
-	start)
-		if [[ -f Procfile ]]; then
-			command="$(ruby -e "require 'yaml';puts YAML.load_file('Procfile')['$app_type']")"
-		else
-			command="$(ruby -e "require 'yaml';puts (YAML.load_file('.release')['default_process_types'] || {})['$app_type']")"
-		fi
-		;;
+start)
+	if [[ -f Procfile ]]; then
+		command="$(ruby -e "require 'yaml';puts YAML.load_file('Procfile')['$app_type']")"
+	else
+		command="$(ruby -e "require 'yaml';puts (YAML.load_file('.release')['default_process_types'] || {})['$app_type']")"
+	fi
+	;;
 
-	*)
-		command="$@"
-		;;
+*)
+	command="$@"
+	;;
 esac
 
 ## Run!
