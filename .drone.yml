@@ -52,6 +52,10 @@ node:
 clone:
   disable: true
 steps:
+- name: clone
+  image: alpine/git
+  commands:
+  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: build&push runner image
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
   volumes:
@@ -65,8 +69,6 @@ steps:
     DOMESTIC_DOCKER_PASSWORD:
       from_secret: domestic_docker_password
   commands:
-  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git
-  - cd runner
   - ./release.sh
 volumes:
 - name: dockersock
