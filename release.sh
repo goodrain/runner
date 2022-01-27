@@ -47,11 +47,11 @@ build::public() {
 # manifest list can not be recreated except the image example/runner:v5.5.0-release has been re-pushed.
 build::manifest() {
     new_tag="${DOMESTIC_BASE_NAME}/${DOMESTIC_NAMESPACE}/runner:${release_version}"
-    docker manifest rm $new_tag
     docker manifest create $new_tag $new_tag $new_tag-arm64
     docker manifest annotate $new_tag $new_tag --os linux --arch amd64
     docker manifest annotate $new_tag $new_tag-arm64 --os linux --arch arm64 --variant v8
     docker manifest push $new_tag
+    docker manifest rm $new_tag
 }
 
 case $1 in
