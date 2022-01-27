@@ -1,0 +1,115 @@
+kind: pipeline
+type: docker
+name: build arm64
+platform:
+  os: linux
+  arch: arm64
+trigger:
+  event:
+    include:
+    - custom
+node:
+  city: sydney
+steps:
+- name: build&push runner image
+  image: rainbond/docker:dind
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  privileged: true
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+  commands:
+  - ./release.sh
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
+
+---
+kind: pipeline
+type: docker
+name: build amd64
+platform:
+  os: linux
+  arch: amd64
+trigger:
+  event:
+    include:
+    - custom
+node:
+  city: shanghai
+clone:
+  disable: true
+steps:
+- name: clone
+  image: alpine/git
+  commands:
+  - git clone -b $DRONE_BRANCH --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
+- name: build&push runner image
+  image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  privileged: true
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+  commands:
+  - ./release.sh
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
+
+---
+kind: pipeline
+type: docker
+name: push manifest
+platform:
+  os: linux
+  arch: amd64
+trigger:
+  event:
+    include:
+    - custom
+node:
+  city: shanghai
+clone:
+  disable: true
+steps:
+- name: clone
+  image: alpine/git
+  environment:
+    RELEASE_VERSION: dev
+  commands:
+  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
+- name: push manifest
+  image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  privileged: true
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+    DOCKER_CLI_EXPERIMENTAL: enabled
+  commands:
+  - ./release.sh manifest
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
+depends_on:
+  - build arm64
+  - build amd64
