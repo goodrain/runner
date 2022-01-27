@@ -49,6 +49,8 @@ trigger:
     - push
 node:
   city: shanghai
+clone:
+  disable: true
 steps:
 - name: build&push runner image
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
@@ -63,6 +65,8 @@ steps:
     DOMESTIC_DOCKER_PASSWORD:
       from_secret: domestic_docker_password
   commands:
+  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git
+  - cd runner
   - ./release.sh
 volumes:
 - name: dockersock
@@ -85,6 +89,8 @@ trigger:
     - push
 node:
   city: shanghai
+clone:
+  disable: true
 steps:
 - name: push manifest
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
@@ -100,6 +106,8 @@ steps:
       from_secret: domestic_docker_password
     DOCKER_CLI_EXPERIMENTAL: enabled
   commands:
+  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git
+  - cd runner
   - ./release.sh manifest
 volumes:
 - name: dockersock
