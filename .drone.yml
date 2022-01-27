@@ -5,12 +5,9 @@ platform:
   os: linux
   arch: arm64
 trigger:
-  branch:
-  - dev
   event:
     include:
     - custom
-    - push
 node:
   city: sydney
 steps:
@@ -41,12 +38,9 @@ platform:
   os: linux
   arch: amd64
 trigger:
-  branch:
-  - dev
   event:
     include:
     - custom
-    - push
 node:
   city: shanghai
 clone:
@@ -54,6 +48,8 @@ clone:
 steps:
 - name: clone
   image: alpine/git
+  environment:
+    RELEASE_VERSION: dev
   commands:
   - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: build&push runner image
@@ -83,17 +79,20 @@ platform:
   os: linux
   arch: amd64
 trigger:
-  branch:
-  - dev
   event:
     include:
     - custom
-    - push
 node:
   city: shanghai
 clone:
   disable: true
 steps:
+- name: clone
+  image: alpine/git
+  environment:
+    RELEASE_VERSION: dev
+  commands:
+  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: push manifest
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
   volumes:
@@ -108,8 +107,6 @@ steps:
       from_secret: domestic_docker_password
     DOCKER_CLI_EXPERIMENTAL: enabled
   commands:
-  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git
-  - cd runner
   - ./release.sh manifest
 volumes:
 - name: dockersock
