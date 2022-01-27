@@ -30,7 +30,7 @@ build::public() {
         # for amd64 and arm64
         if [ $(arch) == "x86_64" ]; then
             new_tag=${new_tag}
-        elif [ $(arch) == "arm64" ]; then
+        elif [ $(arch) == "arm64" ] || [ $(arch) == "aarch64" ]; then
             new_tag=${new_tag}-arm64
         fi
         docker tag goodrain.me/runner "$new_tag"
