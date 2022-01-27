@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 
-release_version=v5.5.0-release
+release_version=${RELEASE_VERSION:-"v5.5.0-release"}
 git_commit=$(git log -n 1 --pretty --format=%h)
 
 release_desc=${release_version}-${git_commit}

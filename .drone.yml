@@ -1,0 +1,98 @@
+kind: pipeline
+type: exec
+name: build arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+trigger:
+  branch:
+  - dev
+  event:
+    include:
+    - custom
+    - push
+
+
+node:
+  city: sydney
+
+steps:
+- name: build&push runner image
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+  commands:
+  - ./release.sh
+
+---
+kind: pipeline
+type: exec
+name: build amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  branch:
+  - dev
+  event:
+    include:
+    - custom
+    - push
+
+
+node:
+  city: shanghai
+
+steps:
+- name: build&push runner image
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+  commands:
+  - ./release.sh
+
+---
+kind: pipeline
+type: exec
+name: push manifest
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  branch:
+  - dev
+  event:
+    include:
+    - custom
+    - push
+
+
+node:
+  city: shanghai
+
+steps:
+- name: push manifest
+  environment:
+    RELEASE_VERSION: dev
+    DOMESTIC_DOCKER_USERNAME:
+      from_secret: domestic_docker_username
+    DOMESTIC_DOCKER_PASSWORD:
+      from_secret: domestic_docker_password
+  commands:
+  - ./release.sh manifest
+
+depends_on:
+  - build arm64
+  - build amd64
