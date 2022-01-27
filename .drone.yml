@@ -16,6 +16,9 @@ node:
 steps:
 - name: build&push runner image
   image: rainbond/docker:dind
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
   privileged: true
   environment:
     RELEASE_VERSION: dev
@@ -25,6 +28,10 @@ steps:
       from_secret: domestic_docker_password
   commands:
   - ./release.sh
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
 
 ---
 kind: pipeline
