@@ -52,6 +52,9 @@ node:
 steps:
 - name: build&push runner image
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
   privileged: true
   environment:
     RELEASE_VERSION: dev
@@ -61,6 +64,10 @@ steps:
       from_secret: domestic_docker_password
   commands:
   - ./release.sh
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
 
 ---
 kind: pipeline
@@ -81,6 +88,9 @@ node:
 steps:
 - name: push manifest
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
   privileged: true
   environment:
     RELEASE_VERSION: dev
@@ -91,6 +101,10 @@ steps:
     DOCKER_CLI_EXPERIMENTAL: enabled
   commands:
   - ./release.sh manifest
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
 depends_on:
   - build arm64
   - build amd64

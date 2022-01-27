@@ -25,7 +25,7 @@ RUN mkdir /app \
 WORKDIR /app
 
 # download webapp-runner for java-war
-RUN wget http://buildpack.oss-cn-shanghai.aliyuncs.com/java/webapp-runner/webapp-runner-8.5.38.0.jar -O /opt/webapp-runner.jar
+RUN wget http://buildpack.rainbond.com/java/webapp-runner/webapp-runner-8.5.38.0.jar -O /opt/webapp-runner.jar
 
 # add default port to expose (can be overridden)
 ENV PORT 5000
