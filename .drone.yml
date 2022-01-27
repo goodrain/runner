@@ -48,10 +48,8 @@ clone:
 steps:
 - name: clone
   image: alpine/git
-  environment:
-    RELEASE_VERSION: dev
   commands:
-  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
+  - git clone -b $DRONE_BRANCH --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: build&push runner image
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
   volumes:
