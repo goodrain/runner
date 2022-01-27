@@ -18,7 +18,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
@@ -57,7 +56,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
@@ -87,10 +85,8 @@ clone:
 steps:
 - name: clone
   image: alpine/git
-  environment:
-    RELEASE_VERSION: dev
   commands:
-  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
+  - git clone -b $DRONE_BRANCH --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: push manifest
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
   volumes:
@@ -98,7 +94,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
