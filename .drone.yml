@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: build arm64
+name: build image for buildpack:runner arm64 
 platform:
   os: linux
   arch: arm64
@@ -18,7 +18,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
@@ -33,7 +32,7 @@ volumes:
 ---
 kind: pipeline
 type: docker
-name: build amd64
+name: build image for buildpack:runner amd64
 platform:
   os: linux
   arch: amd64
@@ -57,7 +56,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
@@ -72,7 +70,7 @@ volumes:
 ---
 kind: pipeline
 type: docker
-name: push manifest
+name: push manifest for buildpack:runner  
 platform:
   os: linux
   arch: amd64
@@ -87,10 +85,8 @@ clone:
 steps:
 - name: clone
   image: alpine/git
-  environment:
-    RELEASE_VERSION: dev
   commands:
-  - git clone -b $RELEASE_VERSION --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
+  - git clone -b $DRONE_BRANCH --depth 1 https://ghproxy.com/https://github.com/goodrain/runner.git .
 - name: push manifest
   image: registry.cn-hangzhou.aliyuncs.com/goodrain/docker:dind-amd64
   volumes:
@@ -98,7 +94,6 @@ steps:
     path: /var/run/docker.sock
   privileged: true
   environment:
-    RELEASE_VERSION: dev
     DOMESTIC_DOCKER_USERNAME:
       from_secret: domestic_docker_username
     DOMESTIC_DOCKER_PASSWORD:
@@ -111,5 +106,5 @@ volumes:
   host:
     path: /var/run/docker.sock
 depends_on:
-  - build arm64
-  - build amd64
+  - build image for buildpack:runner arm64
+  - build image for buildpack:runner amd64

@@ -1,7 +1,18 @@
 #!/bin/bash
 set -xe
 
-release_version=${RELEASE_VERSION:-"v5.5.0-release"}
+# get current branch
+# the tag of image, will be selected from :
+# 1. custom $RELEASE_VERSION
+# 2. $brach_name
+# 3. current version like "v5.5.0-release"
+brach_name=$(git symbolic-ref --short -q HEAD)
+if [ $brach_name == "master" ];
+  release_version=${RELEASE_VERSION:-"v5.5.0-release"}
+else 
+  release_version=${RELEASE_VERSION:-${brach_name}}
+fi
+
 git_commit=$(git log -n 1 --pretty --format=%h)
 
 release_desc=${release_version}-${git_commit}
@@ -9,7 +20,6 @@ DOMESTIC_BASE_NAME=${DOMESTIC_BASE_NAME:-'registry.cn-hangzhou.aliyuncs.com'}
 DOMESTIC_NAMESPACE=${DOMESTIC_NAMESPACE:-'goodrain'}
 
 build::local() {
-
     sed "s/__RELEASE_DESC__/${release_desc}/" Dockerfile >Dockerfile.release
     docker build -t goodrain.me/runner -f Dockerfile.release .
     rm -rf Dockerfile.release
