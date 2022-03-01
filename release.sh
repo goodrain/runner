@@ -5,10 +5,10 @@ set -xe
 # the tag of image, will be selected from :
 # 1. custom $RELEASE_VERSION
 # 2. $brach_name
-# 3. current version like "v5.5.0-release"
+# 3. current version like "v5.6.0-release"
 brach_name=$(git symbolic-ref --short -q HEAD)
 if [ $brach_name == "master" ]; then
-    release_version=${RELEASE_VERSION:-"v5.5.0-release"}
+    release_version=${RELEASE_VERSION:-"v5.6.0-release"}
 else
     release_version=${RELEASE_VERSION:-${brach_name}}
 fi
