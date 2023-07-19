@@ -5,7 +5,7 @@ ENV TZ=Asia/Shanghai
 
 RUN set -x \
     && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y libpng16-16 fonts-dejavu apt-transport-https ca-certificates procps net-tools gettext-base rsync \
+    && apt-get install --no-install-recommends --no-install-suggests -y libpng16-16 fonts-dejavu apt-transport-https ca-certificates procps net-tools gettext-base rsync language-pack-zh-hans \
     && rm -rf /var/lib/apt/lists/* 
 
 ENV HOME /app
@@ -29,8 +29,8 @@ EXPOSE 5000
 ADD ./runner /runner
 RUN chown rain:rain /runner/init
 
+ENV LANG="zh_CN.UTF-8"
+ENV LANGUAGE="zh_CN:zh:en_US:en"
 
-
-ENV LANG='zh_CN.utf8'
 #USER rain
 ENTRYPOINT ["/runner/init"]
