@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/goodrain/stack-image:22
+FROM registry.cn-hangzhou.aliyuncs.com/goodrain/stack-image:23
 LABEL MAINTAINER ="guox <guox@goodrain.com>"
 
 ENV TZ=Asia/Shanghai
