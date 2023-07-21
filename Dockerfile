@@ -3,7 +3,7 @@ LABEL MAINTAINER ="guox <guox@goodrain.com>"
 
 ENV TZ=Asia/Shanghai
 
-RUN set -x apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C
 
 RUN set -x \
     && apt-get update \
