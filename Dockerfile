@@ -3,11 +3,9 @@ LABEL MAINTAINER ="guox <guox@goodrain.com>"
 
 ENV TZ=Asia/Shanghai
 
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb \
-    dpkg -i cuda-keyring_1.0-1_all.deb
-
 RUN set -x \
     && apt-get update \
+    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 871920D1991BC93C \
     && apt-get install --no-install-recommends --no-install-suggests -y libpng16-16 fonts-dejavu apt-transport-https ca-certificates procps net-tools gettext-base rsync language-pack-zh-hans \
     && rm -rf /var/lib/apt/lists/* 
 
