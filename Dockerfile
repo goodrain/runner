@@ -5,7 +5,7 @@ ENV TZ=Asia/Shanghai
 
 RUN set -x \
     && apt-get update \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 871920D1991BC93C \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 871920D1991BC93C \
     && apt-get install --no-install-recommends --no-install-suggests -y libpng16-16 fonts-dejavu apt-transport-https ca-certificates procps net-tools gettext-base rsync language-pack-zh-hans \
     && rm -rf /var/lib/apt/lists/* 
 
