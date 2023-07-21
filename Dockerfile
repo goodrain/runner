@@ -3,6 +3,9 @@ LABEL MAINTAINER ="guox <guox@goodrain.com>"
 
 ENV TZ=Asia/Shanghai
 
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb \
+    dpkg -i cuda-keyring_1.0-1_all.deb
+
 RUN set -x \
     && apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y libpng16-16 fonts-dejavu apt-transport-https ca-certificates procps net-tools gettext-base rsync language-pack-zh-hans \
@@ -31,10 +34,6 @@ RUN chown rain:rain /runner/init
 
 ENV LANG="zh_CN.UTF-8"
 ENV LANGUAGE="zh_CN:zh:en_US:en"
-
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb \
-    dpkg -i cuda-keyring_1.0-1_all.deb
-
 
 #USER rain
 ENTRYPOINT ["/runner/init"]
