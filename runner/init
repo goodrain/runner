@@ -94,4 +94,4 @@ start)
 esac
 
 ## Run!
-exec bash -c "$command"
+exec /bin/tini -- bash -c "$command"

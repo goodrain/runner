@@ -1,5 +1,5 @@
 FROM registry.cn-hangzhou.aliyuncs.com/goodrain/stack-image:22
-LABEL MAINTAINER ="guox <guox@goodrain.com>"
+ARG RELEASE_DESC
 
 ENV TZ=Asia/Shanghai
 
@@ -18,11 +18,16 @@ RUN mkdir /app \
 WORKDIR /app
 
 # download webapp-runner for java-war
-RUN wget http://buildpack.rainbond.com/java/webapp-runner/webapp-runner-8.5.38.0.jar -O /opt/webapp-runner.jar
+RUN wget http://buildpack.rainbond.com/java/webapp-runner/webapp-runner-8.5.38.0.jar -O /opt/webapp-runner.jar && \
+    if [ $(arch) = "arm64" ] || [ $(arch) = "aarch64" ]; then \
+        wget https://pkg.goodrain.com/pkg/tini/v0.19.0/tini-arm -O /bin/tini && chmod +x /bin/tini; \
+    else \
+        wget https://pkg.goodrain.com/pkg/tini/v0.19.0/tini -O /bin/tini && chmod +x /bin/tini; \
+    fi
 
 # add default port to expose (can be overridden)
 ENV PORT 5000
-ENV RELEASE_DESC=__RELEASE_DESC__
+ENV RELEASE_DESC=${RELEASE_DESC}
 
 EXPOSE 5000
 
